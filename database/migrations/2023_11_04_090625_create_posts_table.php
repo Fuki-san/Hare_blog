@@ -15,9 +15,14 @@ return new class extends Migration
             $table->id();
             $table->text('body');
             $table->string('image');
+            //外部キーをもつカラムの追加。blogの個人情報を誰が登録したのかを確認するためにuser_idカラムを作成。
+            //Userモデルがusersテーブルを操作。user_idはusersテーブルと結びついている
             $table->foreignID('user_id')
+                //外部キーの制約。現在usersテーブルとpostsテーブルがあるが、usersのidとpostsのuser_idを紐づけるconstrained制約
                 ->constrained()
+                //親のusersテーブル(のカラムが)変更された場合に、子テーブルのpostsも変更されるように
                 ->cascadeOnUpdate()
+                //同様に、usersの個人情報が削除されたときに、postsの投稿が消えるように
                 ->cascadeOnDelete();
             $table->timestamps();
         });

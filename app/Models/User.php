@@ -42,4 +42,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function posts()
+    {
+    //リレーション設計(紐づけ作業)。ユーザーから記事にアクセスしやすくなる。1人のユーザーは複数の記事と結びつくため。
+        return $this->hasMany(Post::class);
+    }
 }
