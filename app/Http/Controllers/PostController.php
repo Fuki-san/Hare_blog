@@ -54,7 +54,9 @@ class PostController extends Controller
             return back()->withInput()->withErrors($e->getMessage());
         }
         return redirect()
-            ->route('posts.show', $post);
+            ->route('posts.show', $post)
+            //with(1引数,2h奇数0)
+            ->with('notice', '記事を登録しました');
     }
 
     /**
