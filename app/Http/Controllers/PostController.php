@@ -133,6 +133,31 @@ class PostController extends Controller
         return redirect()->route('posts.show', $post)
             ->with('notice', '記事を更新しました');
     }
+
+    public function destroy(string $id)
+    {
+        $post = Post::find($id);
+
+        //トランザクション開始
+        DB::beginTransaction();
+        try {
+            $post->delete();
+            //画像削除
+            if (!Storage::delete('images/posts/' . $post->image)) {
+                //画像削除できなかったら
+                throw new \Exception('画像ファイルの削除に失敗しました');
+            }
+            //トランザクション終了
+            DB::commit();
+        } catch (\Exception $e) {
+            //トランザクション終了
+            DB::rollBack();
+            return back()->withErrors($e->getMessage());
+        }
+        return redirect()->route('posts.index')
+            ->with('notice', '記事を削除しました');
+    }
+
     private static function createFileName($file)
     {
         return date('YmdHis') . '_' . $file->getClientOriginalName();
