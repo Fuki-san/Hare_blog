@@ -15,9 +15,9 @@ use App\Http\Controllers\PostController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [PostController::class, 'index'])
+//nameをつけることで、例えばviewで/にアクセスしたいときにroute('root')でアクセスが可能になる
+    ->name('root');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -29,7 +29,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::resource('posts', PostController::class);
+Route::resource('posts', PostController::class)
+    ->only(['create', 'store', 'edit', 'update', 'destroy'])
+    ->middleware('auth');
+
+Route::resource('posts', PostController::class)
+    ->only(['show', 'index']);
 
 require __DIR__.'/auth.php';
 
