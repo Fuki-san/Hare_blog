@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
+use App\Models\Post;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -19,15 +23,38 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        //
+        $post = new Post($request->all());
+        $post->user_id = $request->user()->id;
+
+        $file = $request->file('image');
+        $post->image = date('YmdHis') . '_' . $file->getClientOriginalName();
+
+        DB::beginTransaction();
+        try {
+            $post->save();
+            //引数どこに、どのファイルを、どの名前のファイルを
+            if (!Storage::putFileAs('images/posts', $file, $post->image)) {
+                //exceptionはエラー
+                throw new \Exception('画像ファイルの保存に失敗しました。');
+            }
+            DB::commit();
+
+            // return redirect()->route('posts.show', $post);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            //backは前の画面へ戻る、withInputは入力した値をゲット、wtithErrorsはエラーメッセージと共に
+            return back()->withInput()->withErrors($e->getMessage());
+        }
+        return redirect()
+            ->route('posts.show', $post);
     }
 
     /**
@@ -35,7 +62,8 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $post = Post::find($id);
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -49,7 +77,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdatePostRequest $request, string $id)
     {
         //
     }

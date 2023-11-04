@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
             $table->text('body');
             $table->string('image');
             //外部キーをもつカラムの追加。blogの個人情報を誰が登録したのかを確認するためにuser_idカラムを作成。
