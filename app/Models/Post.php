@@ -17,11 +17,16 @@ class Post extends Model
 
     public function user()
     {
-    //記事一つは一人のユーザーに紐づけている。リレーション設計(紐づけ作業)。つまり記事からユーザーに簡単にアクセスするため
+        //記事一つは一人のユーザーに紐づけている。リレーション設計(紐づけ作業)。つまり記事からユーザーに簡単にアクセスするため
         return $this->belongsTo(User::class);
     }
     public function getImageUrlAttribute()
     {
-        return Storage::url('images/posts/' . $this->image);
+        return Storage::url($this->image_path);
+    }
+
+    public function getImagePathAttribute()
+    {
+        return 'images/posts/' . $this->image;
     }
 }
