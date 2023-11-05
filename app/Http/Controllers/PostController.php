@@ -53,7 +53,8 @@ class PostController extends Controller
             // return redirect()->route('posts.show', $post);
         } catch (\Exception $e) {
             DB::rollBack();
-            //backは前の画面へ戻る、withInputは入力した値をゲット、wtithErrorsはエラーメッセージと共に
+            //backは前の画面へ戻る、withInputは入力した値をゲット、wtithErrorsはエラーメッセージを
+            //例外オブジェクトから持ってきて、セッションに保存する役割
             return back()->withInput()->withErrors($e->getMessage());
         }
         return redirect()
@@ -67,8 +68,12 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        $post = Post::find($id);
-        return view('posts.show', compact('post'));
+        $post = Post::with(['user'])->find($id);
+        //withで関連するテーブルのuser情報をもってくる
+        //loadによってユーザーの情報を全部持ってくる
+        $comments = $post->comments()->latest()->get()->load(['user']);
+
+        return view('posts.show', compact('post', 'comments'));
     }
 
     /**
