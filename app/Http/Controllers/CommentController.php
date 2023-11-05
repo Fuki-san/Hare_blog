@@ -32,6 +32,7 @@ class CommentController extends Controller
     {
         $comment = new Comment($request->all());
         $comment->user_id = $request->user()->id;
+        //送られてきたコメントとuser情報を取得
 
         try {
             //登録
@@ -41,7 +42,7 @@ class CommentController extends Controller
         } catch (\Exception $e) {
             return back()->withInput()->withErrors($e->getMessage());
         }
-
+        //catchはエラーの場合実行
         return redirect()
             ->route('posts.show', $post)
             ->with('notice', 'コメントを登録しました');
