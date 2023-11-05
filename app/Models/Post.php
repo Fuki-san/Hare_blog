@@ -20,6 +20,13 @@ class Post extends Model
         //記事一つは一人のユーザーに紐づけている。リレーション設計(紐づけ作業)。つまり記事からユーザーに簡単にアクセスするため
         return $this->belongsTo(User::class);
     }
+
+    public function comments()
+    {
+        return $this->hasMany((Comment::class));
+    }
+
+
     public function getImageUrlAttribute()
     {
         return Storage::url($this->image_path);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
@@ -35,6 +36,12 @@ Route::resource('posts', PostController::class)
 
 Route::resource('posts', PostController::class)
     ->only(['show', 'index']);
+
+//posts.commentsの書き方で、postに紐づくコメントとして定義できる
+//これは必須ではないが、分かりやすいため
+Route::resource('posts.comments', CommentController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy'])
+        ->middleware('auth');
 
 require __DIR__.'/auth.php';
 
